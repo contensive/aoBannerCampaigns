@@ -1,6 +1,6 @@
 Type=OleDll
-Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\Windows\system32\stdole2.tlb#OLE Automation
-Reference=*\G{9D21E12F-C8A3-4943-8D6D-240204E986F7}#21.23#0#..\..\..\..\..\..\Release\ccWeb3.dll#Contensive Web Client 3
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
+Reference=*\G{9D21E12F-C8A3-4943-8D6D-240204E986F7}#21.23#0#..\..\..\..\My Documents\github\Release\ccWeb3.dll#Contensive Web Client 3
 Class=Banners; BannerCampaigns.cls
 Module=kmaCommonModule; ..\..\Release\kmaCommonModule.bas
 Module=ccCommonModule; ..\..\Release\ccCommonModule.bas
@@ -17,7 +17,7 @@ CompatibleEXE32="..\..\Release\aoBanners.DLL"
 VersionCompatible32="1"
 MajorVer=1
 MinorVer=0
-RevisionVer=13
+RevisionVer=14
 AutoIncrementVer=1
 ServerSupportFiles=0
 VersionCompanyName="kma.net"

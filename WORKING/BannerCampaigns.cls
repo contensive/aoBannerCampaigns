@@ -189,7 +189,7 @@ Public Function GetContent(OptionString As String) As String
         '
         If True Then
         'If ContentID = Main.GetContentID(ContentNameImages) Then
-            ' 
+            '
             ' ----- Start Anchor if needed
             '
             If Link <> "" Then
@@ -204,7 +204,8 @@ Public Function GetContent(OptionString As String) As String
             ' ----- Add banner
             '
             NonEncodedLink = Main.ServerProtocol & Main.ServerHost & Main.serverFilePath & Main.GetCSText(CS, "ImageFilename")
-            EncodedLink = kmaEncodeURL(NonEncodedLink)
+            EncodedLink = kmaEncodeHTML(NonEncodedLink)
+            'EncodedLink = kmaEncodeURL(NonEncodedLink)
             '
             GetContent = GetContent & "<IMG border=""0"" src=""" & EncodedLink & """"
             If (Width <> 0) Then
@@ -277,7 +278,7 @@ Public Function GetContent(OptionString As String) As String
     Exit Function
 ErrorTrap:
     Call HandleError("BannerCampaignClass", "GetContent", Err.Number, Err.Source, Err.Description, True, False)
-    End Functionan
+    End Function
 '
 Private Function GetBannerCriteria(CampaignID As Long, AndCriteria As Boolean) As String
     On Error GoTo ErrorTrap
