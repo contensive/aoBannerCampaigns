@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoBannerCampaigns", "aoBannerCampaigns\aoBannerCampaigns.csproj", "{824899D3-1274-46BF-8CB0-7BA40E9AE845}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{824899D3-1274-46BF-8CB0-7BA40E9AE845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824899D3-1274-46BF-8CB0-7BA40E9AE845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824899D3-1274-46BF-8CB0-7BA40E9AE845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824899D3-1274-46BF-8CB0-7BA40E9AE845}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
