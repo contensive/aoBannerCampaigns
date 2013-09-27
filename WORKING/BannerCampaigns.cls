@@ -189,7 +189,7 @@ Public Function GetContent(OptionString As String) As String
         '
         If True Then
         'If ContentID = Main.GetContentID(ContentNameImages) Then
-            '
+            ' 
             ' ----- Start Anchor if needed
             '
             If Link <> "" Then
@@ -277,7 +277,7 @@ Public Function GetContent(OptionString As String) As String
     Exit Function
 ErrorTrap:
     Call HandleError("BannerCampaignClass", "GetContent", Err.Number, Err.Source, Err.Description, True, False)
-    End Function
+    End Functionan
 '
 Private Function GetBannerCriteria(CampaignID As Long, AndCriteria As Boolean) As String
     On Error GoTo ErrorTrap
