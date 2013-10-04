@@ -14,16 +14,22 @@ namespace aoBannerCampaigns
         {
             try
             {
-                cpBaseClass = cpBaseClass;
+                if (cpBaseClass == null)
+                {
+                    return string.Empty;
+                }
+
+                this.cpBaseClass = cpBaseClass;
                 CPCSBaseClass cs = cpBaseClass.CSNew();
+                //Console.WriteLine("Hello World");
                 init(cs);
-                optionString = string.Empty;
+                optionString = cpBaseClass.Doc.GetText("");
                 return getContent(optionString);
             }
             catch (Exception ex)
             {
-                // write the line which is written in catch block in existing files.
-                return ex.Message;
+                cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
+                return string.Empty;
             }
         }
 
@@ -35,15 +41,20 @@ namespace aoBannerCampaigns
             }
             catch (Exception ex)
             {
+                cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
             }
 
         }
 
         private string getContent(string optionString)
         {
-            methodName = "Execute";
+            
             string stringValue = string.Empty;
-            string html = string.Empty;
+            string html = "starting getContent()";
+            if (cpBaseClass == null || cs == null)
+            {
+                return string.Empty;
+            }
             try
             {
                 campaignID = cpBaseClass.Utils.EncodeInteger(cpBaseClass.Doc.GetText("Campaign", optionString));
@@ -56,12 +67,10 @@ namespace aoBannerCampaigns
                 //                 Process Banners         
                 //============================================================================================
 
-                bool ok;
                 bannerID = cpBaseClass.Doc.GetInteger("BannerID");
                 if (bannerID != 0)
                 {
-                    ok = cs.Open("Banners", string.Format("(ID = {0})", cpBaseClass.Utils.EncodeInteger(bannerID)));
-                    if (ok)
+                    if (cs.Open("Banners", string.Format("(ID = {0})", cpBaseClass.Utils.EncodeInteger(bannerID))))
                     {
                         clicks = cpBaseClass.Doc.GetInteger("Clicks");
                         cs.SetField("Clicks", (clicks + 1).ToString());
@@ -98,36 +107,12 @@ namespace aoBannerCampaigns
                 else
                 {
                     //  no Campaign given, get any banner from any campaign
-
                     bannerCriteria = string.Format("((ClicksMax is null)OR(Clicks<ClicksMax))" +
                                                    "AND((ViewingsMax is null)OR(Viewings<ViewingsMax))" +
                                                    "AND((DateExpires is null)OR(DateExpires>'{0}'))", sQLNow);
-                    bannerCriteria = string.Format("((ClicksMax is null)OR(Clicks<ClicksMax))" +
-                                                   "AND((ViewingsMax is null)OR(Viewings<ViewingsMax))" +
-                                                   "AND((DateExpires is null)OR(DateExpires> '{0}'))'{1}'",
-                                                   sQLNow, getBannerCriteria(campaignID, true));
 
                 }
-                ok = cs.Open("Banners", bannerCriteria, "LastViewDate", false, string.Empty, 10, 1);
-                if (ok)
-                {
-                    //if (campaignID != 0)
-                    //{
-                    //    // To ask corresponding method of GetAdminHintWrapper in new API
-                    //    stringValue = "Main.GetAdminHintWrapper(There are no banners available within the given campaign.)";
-                    //}
-                    //else
-                    //{
-                    //    stringValue = "Main.GetAdminHintWrapper(" +
-                    //                  "No campaign was selected so all banners will display, but no banner was found." +
-                    //                  "<ul><li>To add a banner, turn on advanced edit and click Add a Banner" +
-                    //                  "<li>To add a campaign, turn on advanced edit and click Add a Campaign" +
-                    //                  "<li>To select a campaign to display here, turn on advanced edit and click the" +
-                    //                  "icon above this text to edit setting for this instance.</ul>)";
-                    //}
-
-                }
-                else
+                if (cs.Open("Banners", bannerCriteria, "LastViewDate", false, string.Empty, 10, 1))
                 {
                     bannerID = cs.GetInteger("ID");
                     link = cs.GetText("Link");
@@ -137,8 +122,10 @@ namespace aoBannerCampaigns
                     align = cs.GetText("Align");
                     clicks = cs.GetInteger("Clicks");
                     clicksMax = cs.GetInteger("ClicksMax");
-                    viewings = cs.GetInteger("ViewingsMax");
+                    viewings = cs.GetInteger("Viewings");
+                    viewingsMax = cs.GetInteger("ViewingsMax");
                     dateExpires = cs.GetDate("DateExpires");
+                    //copy = cs.getcs("");
                     qS = cpBaseClass.Request.QueryString;
 
                     if (isLinkAuthoring)
@@ -220,8 +207,7 @@ namespace aoBannerCampaigns
 
                     cs.SetField("Viewings", (viewings + 1).ToString());
                     cs.SetField("LastViewDate", DateTime.Now.ToString());
-                    csOk = cs.Insert("Banner Viewings");
-                    if (csOk)
+                    if (cs.Insert("Banner Viewings"))
                     {
                         cs.SetField("BannerID", bannerID.ToString());
                     }
@@ -231,11 +217,9 @@ namespace aoBannerCampaigns
             }
             catch (Exception ex)
             {
-                // Place the code which is written at this place in existing file.
+                cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
                 return string.Empty;
             }
-
-
             return html;
         }
 
@@ -243,6 +227,11 @@ namespace aoBannerCampaigns
         {
             string stream, innerStream, criteria;
             stream = innerStream = criteria = string.Empty;
+
+            if (cpBaseClass == null || cs == null)
+            {
+                return string.Empty;
+            }
             try
             {
                 if (campaignID != 0)
@@ -278,22 +267,22 @@ namespace aoBannerCampaigns
             }
             catch (Exception ex)
             {
-                stream = string.Empty;
+                cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
+                return string.Empty;
             }
 
             return stream;
 
         }
 
-        private string optionString, link, methodName, align, sQLNow, qS, bannerName, idCriteria;
-        private string bannerCriteria, hiddenResponse, encodedLink, nonEncodedLink, copy, sql;
-        private long cS, height, width, csBanners, bannerID, campaignID;
-        private long clicks, clicksMax, viewings, viewingsMax, contentID, csBanner;
-        private bool newWindow, isLinkAuthoring, csOk;
+        private string optionString, link, align, sQLNow, qS, bannerName;
+        private string bannerCriteria, hiddenResponse, encodedLink, nonEncodedLink, copy;
+        private long height, width, bannerID, campaignID, viewingsMax;
+        private long clicks, clicksMax, viewings;
+        private bool newWindow, isLinkAuthoring;
         private DateTime dateExpires;
-        private string result;
         private const string contentNameBannerRules = "Banner Campaign Rules";
-
+    
 
 
     }
