@@ -9,22 +9,26 @@ namespace aoBannerCampaigns
     public class BannerCampaigns : AddonBaseClass
     {
         CPBaseClass cpBaseClass;
-        CPCSBaseClass cs;
+        CPCSBaseClass cs;           // JK - this is only used within your routines, so consider declaring it within the routine to prevent memory leak. (but this will work)
+        // JK - consider using "CPBaseClass cp" instead of "CPBaseClass cpBaseClass"
         public override object Execute(CPBaseClass cpBaseClass)
         {
             try
             {
+                // JK - consider removing this - cpBaseClass can never be null. If somehow it is null, it will throw an error the first time you use it and that would be fine.
                 if (cpBaseClass == null)
                 {
                     return string.Empty;
                 }
-
+                // JK - in the old api this was necessary because there were two calls (init and getcontent). In the new api there is only execute() so you do not have to store cp in the class, just pass it as an argument to subrountines that need it.
                 this.cpBaseClass = cpBaseClass;
+                // JK - I commented this out just to emphasize that is it not necessary.
+                // JK - init() and getContent() were publics in the old system that have no value here. They are not needed. 
+                // JK - cs is only used inside your getContent routine, so declare it there and initialize it there. (but this will work)
                 CPCSBaseClass cs = cpBaseClass.CSNew();
-                //Console.WriteLine("Hello World");
-                init(cs);
-                optionString = cpBaseClass.Doc.GetText("");
-                return getContent(optionString);
+                // JK - not needed - init(cs);
+                // JK - not needed - optionString = cpBaseClass.Doc.GetText("");
+                return getContent( /* optionString */);
             }
             catch (Exception ex)
             {
@@ -33,22 +37,23 @@ namespace aoBannerCampaigns
             }
         }
 
-        private void init(CPCSBaseClass cs)
+        // JK - not needed - private void init(CPCSBaseClass cs)
+        // JK - not needed - {
+        // JK - not needed -     try
+        // JK - not needed -     {
+        // JK - not needed -         this.cs = cs;
+        // JK - not needed -     }
+        // JK - not needed -     catch (Exception ex)
+        // JK - not needed -     {
+        // JK - not needed -         cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
+        // JK - not needed -     }
+        // JK - not needed - }
+        //
+        // since getContent(coptionString) is no longer needed, you could put this code
+        // right into execute(). Also, the optionString argument is not needed
+        //
+        private string getContent(/*string optionString*/)
         {
-            try
-            {
-                this.cs = cs;
-            }
-            catch (Exception ex)
-            {
-                cpBaseClass.Site.ErrorReport(ex, "Unexpected trap");
-            }
-
-        }
-
-        private string getContent(string optionString)
-        {
-            
             string stringValue = string.Empty;
             string html = "starting getContent()";
             if (cpBaseClass == null || cs == null)
@@ -57,26 +62,36 @@ namespace aoBannerCampaigns
             }
             try
             {
-                campaignID = cpBaseClass.Utils.EncodeInteger(cpBaseClass.Doc.GetText("Campaign", optionString));
+                // JK - the second argument of getText() is defaultValue, which is returned by getText() if Campaign is missing
+                // JK - calling cp.doc.getInteger("campaign") does the same thing as cp.utils.encodeInteger(p.doc.getText("campaign"))
+                campaignID = cpBaseClass.Utils.EncodeInteger(cpBaseClass.Doc.GetText("Campaign" /*,  optionString */));
                 if (campaignID == 0)
                 {
+                    // JK - the argument here should be "CampaignID", not "Campaign"
+                    // JK - again, you can use cp.doc.getInteger()
                     campaignID = cpBaseClass.Utils.EncodeInteger(cpBaseClass.Doc.GetText("Campaign", optionString));
                 }
 
                 //============================================================================================
                 //                 Process Banners         
+                // JK - if bannerID is not 0, then someone clicked on a banner and you will redirect to the link
                 //============================================================================================
 
                 bannerID = cpBaseClass.Doc.GetInteger("BannerID");
                 if (bannerID != 0)
                 {
+                    // JK - should be cpBaseClass.Db.EncodeSQLNumber(bannerId), not cpBaseClass.Utils.EncodeInteger(bannerID)
                     if (cs.Open("Banners", string.Format("(ID = {0})", cpBaseClass.Utils.EncodeInteger(bannerID))))
                     {
+                        // JK - this should be cs.GetInteger( "Clicks" )
                         clicks = cpBaseClass.Doc.GetInteger("Clicks");
-                        cs.SetField("Clicks", (clicks + 1).ToString());
+                        cs.SetField("Clicks", (clicks + 1).ToString() );
+                        // JK - this should be cs.GetText( "Link" )
                         encodedLink = cpBaseClass.Doc.GetText("Link");
                         nonEncodedLink = cpBaseClass.Utils.DecodeResponseVariable(encodedLink);
                         cs.Close();
+                        // JK - the old code exited here with a redirect to nonEncodedLink, cpBaseClass.Response.Redirect(nonEncodedLink);
+                        // JK - if this redirect is taken, you can exit the routine any way you choose.
                     }
                     cs.Close();
                 }
@@ -93,7 +108,7 @@ namespace aoBannerCampaigns
                 {
                     if (isLinkAuthoring)
                     {
-                        bannerCriteria = getBannerCriteria(campaignID, false);
+                        bannerCriteria = getBannerCriteria( campaignID,  false);
                     }
                     else
                     {
@@ -112,7 +127,7 @@ namespace aoBannerCampaigns
                                                    "AND((DateExpires is null)OR(DateExpires>'{0}'))", sQLNow);
 
                 }
-                if (cs.Open("Banners", bannerCriteria, "LastViewDate", false, string.Empty, 10, 1))
+                if (cs.Open( "Banners", bannerCriteria, "LastViewDate", true, string.Empty, 10, 1))
                 {
                     bannerID = cs.GetInteger("ID");
                     link = cs.GetText("Link");
@@ -228,6 +243,7 @@ namespace aoBannerCampaigns
             string stream, innerStream, criteria;
             stream = innerStream = criteria = string.Empty;
 
+            // JK - dont need to check the global cs object either.
             if (cpBaseClass == null || cs == null)
             {
                 return string.Empty;
@@ -250,6 +266,7 @@ namespace aoBannerCampaigns
                         {
                             innerStream += ",";
                         }
+                        // JK should be cs.getInteger( "bannerid" ).toString()
                         innerStream += cpBaseClass.Doc.GetText("BannerID");
                         cs.GoNext();
 
