@@ -217,7 +217,6 @@ namespace Contensive.Addons.aoBannerCampaigns
                 cp.Site.ErrorReport(ex, "Unexpected trap in getBannerCriteria");
                 return string.Empty;
             }
-
             return stream;
 
         }
