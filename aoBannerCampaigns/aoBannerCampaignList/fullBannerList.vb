@@ -8,7 +8,7 @@
             '
             Try
                 Dim cs As BaseClasses.CPCSBaseClass = CP.CSNew()
-                Dim campaignID As Integer = CP.Utils.EncodeInteger(CP.Doc.Var("Campaign"))
+                Dim campaignID As Integer = CP.Utils.EncodeInteger(CP.Doc.GetInteger("Campaign"))
                 Dim criteria As String = ""
                 Dim bannerID As Integer = 0
                 Dim cs2 As BaseClasses.CPCSBaseClass = CP.CSNew()
@@ -73,7 +73,7 @@
             Dim s As String = ""
             '
             Try
-                Dim bannerID As Integer = CP.Utils.EncodeInteger(CP.Doc.Var("bannerID"))
+                Dim bannerID As Integer = CP.Utils.EncodeInteger(CP.Doc.GetInteger("bannerID"))
                 Dim cs As BaseClasses.CPCSBaseClass = CP.CSNew()
                 Dim link As String = ""
                 Dim clicks As Integer = 0
