@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoBannerCampaigns", "aoBannerCampaigns\aoBannerCampaigns.csproj", "{824899D3-1274-46BF-8CB0-7BA40E9AE845}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "aoBannerCampaignList", "aoBannerCampaignList\aoBannerCampaignList.vbproj", "{CA38CD1F-31EC-477E-8B1E-64EED8BB4867}"
@@ -22,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25C7E254-3140-477B-AA7F-FE2C7611E196}
 	EndGlobalSection
 EndGlobal
