@@ -27,6 +27,7 @@
 		<Template>Yes</Template>
 		<Email>No</Email>
 		<Admin>Yes</Admin>
+		<Category>Extras.Advertisements</Category>
 		<OnPageEndEvent>No</OnPageEndEvent>
 		<OnPageStartEvent>No</OnPageStartEvent>
 		<OnBodyStart>No</OnBodyStart>
