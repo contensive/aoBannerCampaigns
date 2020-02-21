@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<Collection name="Banner Campaigns" guid="{2b178115-eb9a-4d2a-8bfc-a949307272d2}" system="No" updatable="No" blockNavigatorNode="No" onInstallAddonGuid="">
+<Collection name="Banner Campaigns" guid="{2b178115-eb9a-4d2a-8bfc-a949307272d2}" system="No" updatable="Yes" blockNavigatorNode="No" onInstallAddonGuid="">
 	<HelpLink>http://wiki.kmacloud.net/index.php?title=Banner_Campaigns</HelpLink>
 	<Help></Help>
 	<Addon name="Banner Campaign" guid="{FB373315-665D-45C1-A245-63A3037B2BA2}" type="Add-on">
