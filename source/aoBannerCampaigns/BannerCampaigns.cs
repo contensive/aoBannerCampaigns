@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Contensive.BaseClasses;
 
 namespace Contensive.Addons.aoBannerCampaigns {
     public class BannerCampaigns : AddonBaseClass {
         public override object Execute(CPBaseClass cp) {
             string html = "";
-
             try {
                 DateTime dateMinValue = new DateTime(1990, 1, 1);
                 string bannerTitle;
@@ -18,6 +14,28 @@ namespace Contensive.Addons.aoBannerCampaigns {
                 if (campaignID == 0) {
                     campaignID = cp.Doc.GetInteger("CampaignID");
                 }
+
+
+                //if the campaginid is still 0, then use the guid of the instanceguid of the banner campaign
+                string campaignGuid = "";
+                if (campaignID == 0) {
+                    campaignGuid = cp.Doc.GetText("instanceId");
+                    if (!string.IsNullOrEmpty(campaignGuid)) {
+                        if (cs.Open("Banner Campaigns", "ccguid=" + cp.Db.EncodeSQLText(campaignGuid))) {
+                            campaignID = cs.GetInteger("id");
+                        }
+                        else {
+                            //create a settings record for this instance
+                            if (cs.Insert("Banner Campaigns")) {
+                                cs.SetField("ccguid", campaignGuid);
+                                cs.Save();
+                                campaignID = cs.GetInteger("id");
+                            }
+                        }
+                    }
+                }
+
+
                 //============================================================================================
                 //                 Process Banners         
                 //============================================================================================
@@ -42,13 +60,15 @@ namespace Contensive.Addons.aoBannerCampaigns {
                     if (campaignID != 0) {
                         if (isLinkAuthoring) {
                             bannerCriteria = getBannerCriteria(cp, cs, campaignID, false);
-                        } else {
+                        }
+                        else {
                             // Campaign Name given no authoring - select a banner from the campaign
                             bannerCriteria = string.Format("((ClicksMax is null)OR(Clicks<ClicksMax)) " +
                                 "AND((ViewingsMax is null)OR(Viewings<ViewingsMax))" +
                                 "AND((DateExpires is null)OR(DateExpires>{0})){1}", sQLNow, getBannerCriteria(cp, cs, campaignID, true));
                         }
-                    } else {
+                    }
+                    else {
                         //  no Campaign given, get any banner from any campaign
                         bannerCriteria = string.Format("((ClicksMax is null)OR(Clicks<ClicksMax))" +
                                                        "AND((ViewingsMax is null)OR(Viewings<ViewingsMax))" +
@@ -107,9 +127,11 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         if (!string.IsNullOrEmpty(bannerName)) {
                             if (clicksMax != 0 && clicks > clicksMax) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, Clicks Max have been met for this banner: {0}]</div>", bannerName);
-                            } else if (viewingsMax != 0 && viewings > viewingsMax) {
+                            }
+                            else if (viewingsMax != 0 && viewings > viewingsMax) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, Viewings Max have been met for this banner: {0}]</div>", bannerName);
-                            } else if ((dateExpires > dateMinValue) && (dateExpires < DateTime.Now)) {
+                            }
+                            else if ((dateExpires > dateMinValue) && (dateExpires < DateTime.Now)) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, this banner has expired: {0}]</div>", bannerName);
                             }
                         }
@@ -135,7 +157,9 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         html += string.Format("<div style=\"clear:both;\">{0}&nbsp;Add a banner</div>", addLink);
                     }
                 }
-            } catch (Exception ex) {
+
+            }
+            catch (Exception ex) {
                 cp.Site.ErrorReport(ex, "Unexpected trap in execute");
                 return string.Empty;
             }
@@ -161,7 +185,8 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         cs.GoNext();
 
                     } while (cs.OK());
-                } else {
+                }
+                else {
                     innerStream = "0";
                 }
 
@@ -169,13 +194,15 @@ namespace Contensive.Addons.aoBannerCampaigns {
 
                 stream += string.Format("(ID IN({0}))", innerStream);
 
-            } catch (Exception ex) {
+            }
+            catch (Exception ex) {
                 cp.Site.ErrorReport(ex, "Unexpected trap in getBannerCriteria");
                 return string.Empty;
             }
             return stream;
 
         }
+
 
         private string link, align, sQLNow, qS, bannerName;
         private string bannerCriteria, hiddenResponse, encodedLink, nonEncodedLink;
@@ -184,8 +211,6 @@ namespace Contensive.Addons.aoBannerCampaigns {
         private bool newWindow, isLinkAuthoring;
         private DateTime dateExpires;
         private const string contentNameBannerRules = "Banner Campaign Rules";
-
-
 
     }
 }

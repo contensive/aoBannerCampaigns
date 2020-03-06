@@ -43,6 +43,7 @@
 		<RemoteAssetLink></RemoteAssetLink>
 		<Styles></Styles>
 		<styleslinkhref></styleslinkhref>
+		<instanceSettingPrimaryContentId><![CDATA[Banner Campaigns]]></instanceSettingPrimaryContentId>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
 	<CDef Name="Banner Campaign Rules" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBannerCampaignRules" ContentDataSourceName="Default" ContentTableName="ccBannerCampaignRules" DefaultSortMethod="By Name" DeveloperOnly="1" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{E49CA5AC-0748-4838-AE62-8CCB31C8BEB9}" >
