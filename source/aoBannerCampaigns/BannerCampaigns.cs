@@ -3,6 +3,30 @@ using Contensive.BaseClasses;
 
 namespace Contensive.Addons.aoBannerCampaigns {
     public class BannerCampaigns : AddonBaseClass {
+
+
+        //private string link;
+        //private string align;
+        //private string sQLNow;
+        //private string qS;
+        //private string bannerName;
+        //private string bannerCriteria;
+        //private string hiddenResponse;
+        //private string encodedLink;
+        //private string nonEncodedLink;
+        //private int height;
+        //private int width;
+        //private int bannerID;
+        //private int campaignID;
+        //private int viewingsMax;
+        //private int clicks;
+        //private int clicksMax;
+        //private int viewings;
+        //private bool newWindow;
+        //private bool isLinkAuthoring;
+        private DateTime dateExpires;
+        private const string contentNameBannerRules = "Banner Campaign Rules";
+
         public override object Execute(CPBaseClass cp) {
             string html = "";
             try {
@@ -10,7 +34,7 @@ namespace Contensive.Addons.aoBannerCampaigns {
                 string bannerTitle;
                 bool exitWithoutBanner = false;
                 CPCSBaseClass cs = cp.CSNew();
-                campaignID = cp.Doc.GetInteger("Campaign");
+                int campaignID = cp.Doc.GetInteger("Campaign");
                 if (campaignID == 0) {
                     campaignID = cp.Doc.GetInteger("CampaignID");
                 }
@@ -39,10 +63,12 @@ namespace Contensive.Addons.aoBannerCampaigns {
                 //============================================================================================
                 //                 Process Banners         
                 //============================================================================================
-                bannerID = cp.Doc.GetInteger("BannerID");
+                int bannerID = cp.Doc.GetInteger("BannerID");
+                string nonEncodedLink = "";
+                string encodedLink = "";
                 if (bannerID != 0) {
                     if (cs.Open("Banners", string.Format("(ID = {0})", cp.Db.EncodeSQLNumber(bannerID)))) {
-                        clicks = cs.GetInteger("Clicks");
+                        int clicks = cs.GetInteger("Clicks");
                         cs.SetField("Clicks", (clicks + 1).ToString());
                         encodedLink = cs.GetText("Link");
                         nonEncodedLink = cp.Utils.DecodeResponseVariable(encodedLink);
@@ -55,8 +81,9 @@ namespace Contensive.Addons.aoBannerCampaigns {
                     //==========================================================================
                     // get next banner
                     //==========================================================================
-                    sQLNow = cp.Db.EncodeSQLDate(DateTime.Now);
-                    isLinkAuthoring = cp.User.IsEditingAnything;
+                    string sQLNow = cp.Db.EncodeSQLDate(DateTime.Now);
+                    bool isLinkAuthoring = cp.User.IsEditingAnything;
+                    string bannerCriteria = "";
                     if (campaignID != 0) {
                         if (isLinkAuthoring) {
                             bannerCriteria = getBannerCriteria(cp, cs, campaignID, false);
@@ -75,27 +102,16 @@ namespace Contensive.Addons.aoBannerCampaigns {
                                                        "AND((DateExpires is null)OR(DateExpires>{0}))", sQLNow);
 
                     }
+                    string hiddenResponse = "";
                     if (cs.Open("Banners", bannerCriteria, "LastViewDate", true, string.Empty, 10, 1)) {
-                        bannerName = cs.GetText("name");
                         bannerID = cs.GetInteger("ID");
-                        link = cs.GetText("Link");
-                        newWindow = cs.GetBoolean("NewWindow");
-                        height = cs.GetInteger("Height");
-                        width = cs.GetInteger("Width");
-                        align = cs.GetText("Align");
-                        clicks = cs.GetInteger("Clicks");
-                        clicksMax = cs.GetInteger("ClicksMax");
-                        viewings = cs.GetInteger("Viewings");
-                        viewingsMax = cs.GetInteger("ViewingsMax");
                         dateExpires = cs.GetDate("DateExpires");
                         bannerTitle = cs.GetText("caption");
-                        qS = cp.Doc.RefreshQueryString;
-
-                        if (isLinkAuthoring) {
-                            html += string.Format("<div>{0}</div>", cs.GetEditLink());
-                        }
-
+                        string link = cs.GetText("Link");
+                        bool newWindow = cs.GetBoolean("NewWindow");
+                        //
                         if (!string.IsNullOrEmpty(link)) {
+                            string qS = cp.Doc.RefreshQueryString;
                             qS = cp.Utils.ModifyQueryString(qS, "bannerid", bannerID.ToString(), true);
                             html += string.Format("<a href=\"{0}?{1}\"", cp.Request.Page, qS);
                             if (newWindow) {
@@ -108,12 +124,15 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         nonEncodedLink = cp.Request.Protocol + cp.Request.Host + cp.Site.FilePath + cs.GetText("ImageFilename");
                         encodedLink = cp.Utils.EncodeHTML(nonEncodedLink);
                         html += string.Format("<IMG border=\"0\" src=\"{0}\"", encodedLink);
+                        int width = cs.GetInteger("Width");
                         if (width != 0) {
                             html += string.Format(" width=\"{0}\"", width);
                         }
+                        int height = cs.GetInteger("Height");
                         if (height != 0) {
                             html += string.Format(" height=\"{0}\"", height);
                         }
+                        string align = cs.GetText("Align");
                         if (!string.IsNullOrEmpty(align)) {
                             html += string.Format(" align=\"{0}\"", align);
                         }
@@ -124,14 +143,17 @@ namespace Contensive.Addons.aoBannerCampaigns {
                             html += "</a>";
                         }
 
+                        string bannerName = cs.GetText("name");
+                        int viewings = cs.GetInteger("Viewings");
                         if (!string.IsNullOrEmpty(bannerName)) {
+                            int clicks = cs.GetInteger("Clicks");
+                            int clicksMax = cs.GetInteger("ClicksMax");
+                            int viewingsMax = cs.GetInteger("ViewingsMax");
                             if (clicksMax != 0 && clicks > clicksMax) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, Clicks Max have been met for this banner: {0}]</div>", bannerName);
-                            }
-                            else if (viewingsMax != 0 && viewings > viewingsMax) {
+                            } else if (viewingsMax != 0 && viewings > viewingsMax) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, Viewings Max have been met for this banner: {0}]</div>", bannerName);
-                            }
-                            else if ((dateExpires > dateMinValue) && (dateExpires < DateTime.Now)) {
+                            } else if ((dateExpires > dateMinValue) && (dateExpires < DateTime.Now)) {
                                 hiddenResponse = string.Format("<div style=\"clear:both;\">[Administrator, this banner has expired: {0}]</div>", bannerName);
                             }
                         }
@@ -156,6 +178,7 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         string addLink = cp.Content.GetAddLink("banners", "campaign=" + campaignID, false, true);
                         html += string.Format("<div style=\"clear:both;\">{0}&nbsp;Add a banner</div>", addLink);
                     }
+                    html = cp.Content.GetEditWrapper(html, "banners", bannerID);
                 }
 
             }
@@ -202,15 +225,5 @@ namespace Contensive.Addons.aoBannerCampaigns {
             return stream;
 
         }
-
-
-        private string link, align, sQLNow, qS, bannerName;
-        private string bannerCriteria, hiddenResponse, encodedLink, nonEncodedLink;
-        private long height, width, bannerID, campaignID, viewingsMax;
-        private long clicks, clicksMax, viewings;
-        private bool newWindow, isLinkAuthoring;
-        private DateTime dateExpires;
-        private const string contentNameBannerRules = "Banner Campaign Rules";
-
     }
 }
