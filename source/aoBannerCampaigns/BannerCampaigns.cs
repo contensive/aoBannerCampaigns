@@ -176,7 +176,7 @@ namespace Contensive.Addons.aoBannerCampaigns {
                         // authoring - show hiddenresponse and do not count viewings or lastviewdate
                         html += hiddenResponse;
                         string addLink = cp.Content.GetAddLink("banners", "campaign=" + campaignID, false, true);
-                        html += string.Format("<div style=\"clear:both;\">{0}&nbsp;Add a banner</div>", addLink);
+                        html += string.Format("<div style=\"clear:both;\">{0}</div>", addLink);
                     }
                     html = cp.Content.GetEditWrapper(html, "banners", bannerID);
                 }
